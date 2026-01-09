@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { FormRegistration } from "./_components/FormRegistration";
 
-export default function page() {
+export default async function page() {
   return (
     <main className="w-full h-screen flex flex-col justify-center items-center">
       <Card className="w-3/4 lg:w-1/3">
@@ -12,7 +12,7 @@ export default function page() {
           <FormRegistration />
 
           <p className="text-center">
-            <Link href="/login" className="underline">Login</Link>
+            <Link href="/auth/login" className="underline">Login</Link>
           </p>
         </CardContent>
       </Card>

@@ -12,7 +12,7 @@ export default function page() {
           <FormLogin />
 
           <p className="text-center">
-            <Link href="/registration" className="underline">Registration</Link>
+            <Link href="/auth/registration" className="underline">Registration</Link>
           </p>
         </CardContent>
       </Card>

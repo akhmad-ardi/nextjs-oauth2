@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+// import { useRouter } from "next/navigation";
 import { FieldValues, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AxiosError } from "axios";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,48 +16,47 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { RegistrationSchema, TypeRegistrationSchema } from "@/validations/registration.validation";
+import { LoginSchema, TypeLoginSchema} from "@/validations/login.validation";
+import { Login } from "@/server/login";
 
-export function FormRegistration() {
+export function FormLogin() {
+  // const router = useRouter();
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const form = useForm<TypeRegistrationSchema>({
-    resolver: zodResolver(RegistrationSchema),
+  const form = useForm<TypeLoginSchema>({
+    resolver: zodResolver(LoginSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirm_password: "",
-    }
+      email: "test_email@example.com",
+      password: "securePass123",
+    },
   });
 
-  function onSubmit(_values: FieldValues) {
+  async function onSubmit(_values: FieldValues) {
     setIsLoading(true);
 
-    /**
-      Baris kode ini merupakan logic untuk request ke API
-    */
+    try {
+      await Login(_values);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const data = error.response?.data;
 
-    setIsLoading(false);
+        if (data.message) {
+          alert(data.message);
+        }
+
+        if (data.messages) {
+          console.log(data.messages);
+        }
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <Form {...form}>
       <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input type="text" placeholder="Name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="email"
@@ -76,20 +77,6 @@ export function FormRegistration() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input type="password" placeholder="Password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="confirm_password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
               <FormControl>
                 <Input type="password" placeholder="Password" {...field} />
               </FormControl>
